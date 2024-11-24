@@ -3,10 +3,10 @@ import { createSlice } from '@reduxjs/toolkit';
 export const CartSlice = createSlice({
   name: 'cart',
   initialState: {
-    items: [], // Inicializa o array de itens como vazio
+    items: [], // Initialize items as an empty array
   },
   reducers: {
-    // Adiciona um item ao carrinho ou incrementa a quantidade se o item já estiver no carrinho
+  /*
     addItem: (state, action) => {
       const { name, image, cost } = action.payload;
       const existingItem = state.items.find(item => item.name === name);
@@ -16,25 +16,34 @@ export const CartSlice = createSlice({
         state.items.push({ name, image, cost, quantity: 1 });
       }
     },
-
-    // Remove um item do carrinho com base no nome
-    removeItem: (state, action) => {
-      state.items = state.items.filter(item => item.name !== action.payload);
+    */
+    addItem: (state, action) => {
+      const item = action.payload;
+      const existingItem = state.items.find((i) => i.name === item.id);
+      if (existingItem) {
+        existingItem.quantity++;
+      } else {
+        state.items.push({ ...item, quantity: 1 });
+      }
     },
 
-    // Atualiza a quantidade de um item no carrinho
+
+    removeItem: (state, action) => {
+      const item = action.payload;
+      state.items = state.items.filter((i) => i.name !== item.name);
+    },
+
     updateQuantity: (state, action) => {
       const { name, quantity } = action.payload;
-      const itemToUpdate = state.items.find(item => item.name === name);
-      if (itemToUpdate) {
-        itemToUpdate.quantity = quantity;
+      const item = state.items.find((i) => i.name === name);
+      item.quantity = quantity;
+      if (item.quantity === 0) {
+        state.items = state.items.filter((i) => i.name !== name);
       }
     },
   },
 });
 
-// Exporta as ações para que possam ser utilizadas em outros componentes
 export const { addItem, removeItem, updateQuantity } = CartSlice.actions;
 
-// Exporta o reducer como default, para ser usado no store
 export default CartSlice.reducer;
